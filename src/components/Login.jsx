@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
+  getCLientId,
   getClientName,
   getRole,
   loginUser,
   saveLoggedinUser,
   saveUserRole,
+  storeClientId,
   storeClientName,
   storeToken,
 } from "../service/apiService";
@@ -47,7 +49,10 @@ const Login = () => {
       if (userRole === "client") {
         const clientResponse = await getClientName(username);
         const name = clientResponse.data.message.name;
+        const clientIdResponse = await getCLientId(username);
+        const clientId = clientIdResponse.data.message.clientId;
         storeClientName(name);
+        storeClientId(clientId);
         navigate("/client");
       } else if (userRole === "admin") {
         navigate("/admin");

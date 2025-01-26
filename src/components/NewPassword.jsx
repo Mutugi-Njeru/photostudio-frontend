@@ -1,6 +1,44 @@
-import React from "react";
+import React, { useState } from "react";
+import { resetPassword } from "../service/apiService";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const NewPassword = () => {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [isSending, setIsSending] = useState(false);
+  const [error, setError] = useState({
+    email: "",
+  });
+
+  const validateEmail = () => {
+    const validationErrors = {};
+    if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
+      validationErrors.email = "Please enter a valid email address";
+    }
+    setError(validationErrors);
+    return Object.keys(validationErrors).length === 0;
+  };
+
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
+    if (!validateEmail()) {
+      toast.error("Please provide a valid email before submitting.");
+      return;
+    }
+    setIsSending(true);
+    try {
+      await resetPassword(email);
+      toast.success("Please check your email to reset your password");
+      navigate("/login");
+    } catch (error) {
+      toast.error("Error sending email. Please try again.");
+      console.error(error);
+    } finally {
+      setIsSending(false);
+    }
+  };
+
   return (
     <div className="">
       <div className="p-10">
@@ -11,13 +49,16 @@ const NewPassword = () => {
             </p>
           </div>
 
-          <div>
+          <form onSubmit={handleResetPassword}>
             <div className="relative w-full">
               <input
                 type="text"
                 id="email"
                 className="border-1 peer block w-full appearance-none rounded-lg border border-gray-300 bg-transparent px-2.5 pb-2.5 pt-4 text-sm text-gray-900 focus:border-blue-600 focus:outline-none focus:ring-0"
                 placeholder=" "
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
               <label
                 htmlFor="email"
@@ -25,11 +66,18 @@ const NewPassword = () => {
               >
                 Enter Your Email
               </label>
+              {error.email && (
+                <span className="text-sm text-red-600">{error.email}</span>
+              )}
             </div>
-          </div>
-          <button className="rounded-lg bg-blue-600 py-3 font-bold text-white">
-            Reset
-          </button>
+            <button
+              type="submit"
+              className="rounded-lg bg-blue-600 py-3 font-bold text-white w-full mt-4"
+              disabled={isSending}
+            >
+              {isSending ? "Sending..." : "Reset"}
+            </button>
+          </form>
 
           {/* Add "Sign up here" link */}
           <div className="text-center text-sm text-gray-600">

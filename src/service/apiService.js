@@ -17,8 +17,13 @@ export const saveUserRole=(role)=>sessionStorage.setItem("userRole", role)
 export const saveLoggedinUser=(username)=> sessionStorage.setItem("authenticatedUser", username)
 export const getClientName=(username)=> axios.get(BASE_REST_API_URL+ 'client/get/' +username)
 export const storeClientName=(name)=>localStorage.setItem("name", name)
+export const storeClientId=(clientId)=>localStorage.setItem("clientId", clientId)
 export const getStoredClientName=()=>localStorage.getItem("name") 
+export const getStoredClientId=()=>localStorage.getItem("clientId")
 export const signUpClient=(client)=>axios.post(BASE_REST_API_URL+ 'client/create', client)
+export const resetPassword=(email)=>axios.put(BASE_REST_API_URL+ 'user/password/' +email)
+export const getCLientId=(username)=>axios.get(BASE_REST_API_URL+ 'client/get/id/' +username) 
+export const bookSession=(session)=>axios.post(BASE_REST_API_URL+ 'event/add', session) 
 export const logout=()=>{
     localStorage.clear();
     sessionStorage.clear();
