@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   FaCamera,
   FaCalendarAlt,
@@ -10,55 +10,49 @@ import {
 } from "react-icons/fa";
 import {
   bookSession,
+  getClientEvents,
   getStoredClientId,
   getStoredClientName,
   logout,
 } from "../../service/apiService";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-
-const dummyBookings = [
-  {
-    id: 1,
-    date: "2025-01-20",
-    service: "Photography",
-    status: "completed",
-    image:
-      "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?q=80&w=200&h=200",
-  },
-];
-
-const statusColors = {
-  completed: "bg-green-100 text-green-800",
-  pending: "bg-yellow-100 text-yellow-800",
-  cancelled: "bg-red-100 text-red-800",
-};
+import AccountSettingsModal from "./AccountSettingsModal";
 
 function Client() {
+  const itemsPerPage = 3;
+  const [currentPage, setCurrentPage] = useState(1);
   const clientName = getStoredClientName();
   const clientId = getStoredClientId();
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
+  const [isAccountSettingsOpen, setIsAccountSettingsOpen] = useState(false);
+  const [events, setEvents] = useState([]);
+  const totalPages = Math.ceil(events.length / itemsPerPage);
+  const paginatedEvents = events.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
   const [booking, setBooking] = useState({
     clientId: clientId,
     eventDate: "",
     location: "",
     eventType: "",
   });
-  const [errors, setErrors] = useState({
-    clientId: clientId,
-    eventDate: "",
-    location: "",
-    eventType: "",
-  });
 
-  const [formData, setFormData] = useState({
-    date: "",
-    location: "",
-    eventType: "",
-  });
+  useEffect(() => {
+    getEvents();
+  }, [clientId]);
+
+  const getEvents = async () => {
+    try {
+      const response = await getClientEvents(clientId);
+      setEvents(response.data.message);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const bookEvent = async (e) => {
     e.preventDefault();
@@ -73,6 +67,7 @@ function Client() {
         eventType: "",
       });
       setIsModalOpen(false);
+      await getEvents(); // Now it is defined and accessible
     } catch (error) {
       toast.error("Error booking session. Please try again.");
       console.error(error);
@@ -98,7 +93,7 @@ function Client() {
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-4">
             <FaCamera className="h-8 w-8 text-primary" />
-            <h1 className="text-xl font-semibold">Studio Dashboard</h1>
+            <h1 className="text-xl font-semibold">Stewart Dashboard</h1>
           </div>
           <button className="relative h-10 w-10 rounded-full">
             <img
@@ -223,35 +218,87 @@ function Client() {
                 <FaCalendarAlt className="h-5 w-5" />
                 <h3 className="text-xl font-bold">Upcoming Sessions</h3>
               </div>
+
               <div className="space-y-6">
-                {dummyBookings.map((booking) => (
+                {paginatedEvents.map((event) => (
                   <div
-                    key={booking.id}
+                    key={event.eventId}
                     className="flex items-center gap-4 rounded-lg border p-4"
                   >
                     <img
-                      src={booking.image}
-                      alt={booking.service}
+                      src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?q=80&w=200&h=200"
+                      alt={event.eventType}
                       className="h-16 w-16 rounded-md object-cover"
                     />
                     <div className="flex-1 space-y-1">
                       <div className="flex items-center justify-between">
-                        <h3 className="font-medium">{booking.service}</h3>
+                        <h3 className="font-medium">{event.eventType}</h3>
+                        <div className="flex-1 flex justify-center">
+                          <h3
+                            className={`font-medium ${
+                              event.status === "waiting approval"
+                                ? "text-yellow-600"
+                                : event.status === "approved"
+                                ? "text-green-600"
+                                : "text-gray-600"
+                            }`}
+                          >
+                            {event.status}
+                          </h3>
+                        </div>
+
                         <span
                           className={`px-2 py-1 text-sm rounded ${
-                            statusColors[booking.status]
+                            event.isActive
+                              ? "bg-green-100 text-green-800"
+                              : "bg-yellow-100 text-yellow-800"
                           }`}
                         >
-                          {booking.status}
+                          {event.isActive ? "Completed" : "Pending"}
                         </span>
                       </div>
+                      <p className="text-sm text-gray-500">{event.location}</p>
                       <p className="text-sm text-gray-500">
                         Scheduled for{" "}
-                        {new Date(booking.date).toLocaleDateString()}
+                        {new Date(event.eventDate).toLocaleDateString()}
                       </p>
                     </div>
                   </div>
                 ))}
+              </div>
+              {/* Pagination Controls */}
+              <div className="flex justify-center mt-6 space-x-2">
+                <button
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
+                  disabled={currentPage === 1}
+                  className={`px-4 py-2 rounded ${
+                    currentPage === 1
+                      ? "bg-gray-300 cursor-not-allowed"
+                      : "bg-black text-white"
+                  }`}
+                >
+                  Previous
+                </button>
+
+                <span className="px-4 py-2 border rounded">
+                  {currentPage} / {totalPages}
+                </span>
+
+                <button
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                  }
+                  disabled={currentPage === totalPages}
+                  className={`px-4 py-2 rounded ${
+                    currentPage === totalPages
+                      ? "bg-gray-300 cursor-not-allowed"
+                      : "bg-black text-white"
+                  }`}
+                >
+                  Next
+                </button>
               </div>
             </div>
           </div>
@@ -270,12 +317,15 @@ function Client() {
                   className="h-20 w-20 rounded-full object-cover"
                 />
                 <div className="text-center">
-                  <h3 className="font-medium">John Doe</h3>
+                  <h3 className="font-medium">{clientName}</h3>
                   <p className="text-sm text-gray-500">Premium Member</p>
                 </div>
                 <div className="w-full space-y-2">
-                  <button className="w-full px-4 py-2 text-left border rounded flex items-center gap-2">
-                    <FaCog /> Account Settings
+                  <button
+                    className="w-full px-4 py-2 text-left border rounded flex items-center gap-2"
+                    onClick={() => setIsAccountSettingsOpen(true)}
+                  >
+                    <FaCog /> Account Details
                   </button>
                   <button className="w-full px-4 py-2 text-left border rounded flex items-center gap-2">
                     <FaCreditCard /> Billing
@@ -292,6 +342,10 @@ function Client() {
           </div>
         </div>
       </main>
+      <AccountSettingsModal
+        isOpen={isAccountSettingsOpen}
+        onClose={() => setIsAccountSettingsOpen(false)}
+      />
     </div>
   );
 }

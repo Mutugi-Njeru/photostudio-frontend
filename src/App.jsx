@@ -16,6 +16,10 @@ import Header from "./components/dashboard/Header";
 import Client from "./components/client/Client";
 import { ToastContainer } from "react-toastify";
 import { isUserLoggedIn, logout } from "./service/apiService";
+import Clients from "./components/dashboard/components/Clients";
+import Sessions from "./components/dashboard/components/Sessions";
+import Users from "./components/dashboard/components/Users";
+import Settings from "./components/dashboard/components/Settings";
 
 function App() {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
@@ -31,8 +35,8 @@ function App() {
   const dashboardRoutes = [
     "/admin",
     "/users",
-    "/products",
-    "/analytics",
+    "/clients",
+    "/sessions",
     "/settings",
   ];
   const isDashboardRoute = dashboardRoutes.includes(location.pathname);
@@ -82,31 +86,31 @@ function App() {
               }
             />
             <Route
+              path="/clients"
+              element={
+                <div className="p-6">
+                  <AuthenticatedRoute role="admin">
+                    <Clients />
+                  </AuthenticatedRoute>
+                </div>
+              }
+            />
+            <Route
+              path="/sessions"
+              element={
+                <div className="p-6">
+                  <AuthenticatedRoute role="admin">
+                    <Sessions />
+                  </AuthenticatedRoute>
+                </div>
+              }
+            />
+            <Route
               path="/users"
               element={
                 <div className="p-6">
                   <AuthenticatedRoute role="admin">
-                    Users page
-                  </AuthenticatedRoute>
-                </div>
-              }
-            />
-            <Route
-              path="/products"
-              element={
-                <div className="p-6">
-                  <AuthenticatedRoute role="admin">
-                    Products Page
-                  </AuthenticatedRoute>
-                </div>
-              }
-            />
-            <Route
-              path="/analytics"
-              element={
-                <div className="p-6">
-                  <AuthenticatedRoute role="admin">
-                    Analytics Page
+                    <Users />
                   </AuthenticatedRoute>
                 </div>
               }
@@ -116,7 +120,7 @@ function App() {
               element={
                 <div className="p-6">
                   <AuthenticatedRoute role="admin">
-                    Settings Page
+                    <Settings />
                   </AuthenticatedRoute>
                 </div>
               }

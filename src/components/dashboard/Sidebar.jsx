@@ -29,7 +29,7 @@ function Sidebar({ isOpen, onClose }) {
       `}
       >
         <div className="flex justify-between items-center mb-8">
-          <div className="text-2xl font-bold">Admin Panel</div>
+          <div className="text-2xl font-bold">Stewart</div>
           <button
             onClick={onClose}
             className="p-2 rounded-full hover:bg-gray-700 lg:hidden"
@@ -51,32 +51,32 @@ function Sidebar({ isOpen, onClose }) {
             </li>
             <li>
               <Link
+                to="/clients"
+                className="flex items-center space-x-2 p-2 hover:bg-gray-700 rounded"
+                onClick={onClose}
+              >
+                <FiUsers className="text-xl" />
+                <span>Clients</span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/sessions"
+                className="flex items-center space-x-2 p-2 hover:bg-gray-700 rounded"
+                onClick={onClose}
+              >
+                <FiBox className="text-xl" />
+                <span>Sessions</span>
+              </Link>
+            </li>
+            <li>
+              <Link
                 to="/users"
                 className="flex items-center space-x-2 p-2 hover:bg-gray-700 rounded"
                 onClick={onClose}
               >
                 <FiUsers className="text-xl" />
                 <span>Users</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/products"
-                className="flex items-center space-x-2 p-2 hover:bg-gray-700 rounded"
-                onClick={onClose}
-              >
-                <FiBox className="text-xl" />
-                <span>Products</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/analytics"
-                className="flex items-center space-x-2 p-2 hover:bg-gray-700 rounded"
-                onClick={onClose}
-              >
-                <FiBarChart2 className="text-xl" />
-                <span>Analytics</span>
               </Link>
             </li>
             <li>

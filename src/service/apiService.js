@@ -24,6 +24,12 @@ export const signUpClient=(client)=>axios.post(BASE_REST_API_URL+ 'client/create
 export const resetPassword=(email)=>axios.put(BASE_REST_API_URL+ 'user/password/' +email)
 export const getCLientId=(username)=>axios.get(BASE_REST_API_URL+ 'client/get/id/' +username) 
 export const bookSession=(session)=>axios.post(BASE_REST_API_URL+ 'event/add', session) 
+export const getClientDetails=(clientId)=> axios.get(BASE_REST_API_URL+ 'client/details/' + clientId)
+export const updateClientDetails=(clientId, client)=> axios.put(BASE_REST_API_URL+ 'client/update/'+ clientId, client)
+export const updateClientPassword=(clientId, password)=> axios.put(BASE_REST_API_URL+ 'client/password/'+ clientId, password)
+export const deactivateClientAccount=(clientId)=> axios.put(BASE_REST_API_URL+ 'client/deactivate/'+ clientId);
+export const getClientEvents=(clientId)=> axios.get(BASE_REST_API_URL+ 'event/client/' + clientId)
+export const getAllClients=()=> axios.get(BASE_REST_API_URL+ 'client/all')
 export const logout=()=>{
     localStorage.clear();
     sessionStorage.clear();
