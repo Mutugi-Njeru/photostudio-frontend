@@ -18,6 +18,8 @@ export const saveLoggedinUser=(username)=> sessionStorage.setItem("authenticated
 export const getClientName=(username)=> axios.get(BASE_REST_API_URL+ 'client/get/' +username)
 export const storeClientName=(name)=>localStorage.setItem("name", name)
 export const storeClientId=(clientId)=>localStorage.setItem("clientId", clientId)
+export const storeUserId=(userId)=>localStorage.setItem("userId", userId)
+export const getStoredUserId=()=>localStorage.getItem("userId")
 export const getStoredClientName=()=>localStorage.getItem("name") 
 export const getStoredClientId=()=>localStorage.getItem("clientId")
 export const signUpClient=(client)=>axios.post(BASE_REST_API_URL+ 'client/create', client)
@@ -30,6 +32,11 @@ export const updateClientPassword=(clientId, password)=> axios.put(BASE_REST_API
 export const deactivateClientAccount=(clientId)=> axios.put(BASE_REST_API_URL+ 'client/deactivate/'+ clientId);
 export const getClientEvents=(clientId)=> axios.get(BASE_REST_API_URL+ 'event/client/' + clientId)
 export const getAllClients=()=> axios.get(BASE_REST_API_URL+ 'client/all')
+export const deactivateUser=(userId)=> axios.put(BASE_REST_API_URL+ 'user/deactivate/'+ userId)
+export const reactivateUser=(userId)=> axios.put(BASE_REST_API_URL+ 'user/reactivate/'+ userId)
+export const getUserId=(username)=> axios.get(BASE_REST_API_URL+ 'user/get/id/' +username)
+export const getAllEvents=()=> axios.get(BASE_REST_API_URL+ 'event/all')
+
 export const logout=()=>{
     localStorage.clear();
     sessionStorage.clear();

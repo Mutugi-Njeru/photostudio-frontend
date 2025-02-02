@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import ClientCards from "./ClientCards";
 import AddClientModal from "./AddClientModal";
-import { getAllClients } from "../../../service/apiService";
+import {
+  deactivateUser,
+  getAllClients,
+  reactivateUser,
+} from "../../../service/apiService";
+import { useNavigate } from "react-router-dom";
 
 const Clients = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -9,7 +14,6 @@ const Clients = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const clientsPerPage = 5;
-
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
@@ -49,6 +53,25 @@ const Clients = () => {
     if (currentPage > 1) {
       setCurrentPage((prev) => prev - 1);
     }
+  };
+
+  const deactivateClient = async (userId) => {
+    await deactivateUser(userId)
+      .then((response) => {
+        getClients();
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+  const reactivateClient = async (userId) => {
+    await reactivateUser(userId)
+      .then((response) => {
+        getClients();
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
 
   return (
@@ -95,7 +118,6 @@ const Clients = () => {
               <th className="px-4 py-3 hidden lg:table-cell">Joined</th>
               <th className="px-4 py-3 hidden sm:table-cell">Phone</th>
               <th className="px-4 py-3 hidden sm:table-cell">Email</th>
-              <th className="px-4 py-3 hidden md:table-cell">Username</th>
               <th className="px-4 py-3 hidden md:table-cell">Sessions</th>
               <th className="px-4 py-3">Status</th>
               <th className="px-4 py-3">Action</th>
@@ -111,7 +133,7 @@ const Clients = () => {
                   <td className="px-4 py-4 font-medium text-gray-900">
                     {client.fullname}
                   </td>
-                  <td className="px-4 py-4 hidden sm:table-cell">
+                  <td className="px-4 py-4 hidden sm:table-cell text-blue-600">
                     {client.dateOfJoin}
                   </td>
                   <td className="px-4 py-4 hidden sm:table-cell">
@@ -120,20 +142,40 @@ const Clients = () => {
                   <td className="px-4 py-4 hidden md:table-cell">
                     {client.email}
                   </td>
-                  <td className="px-4 py-4 hidden md:table-cell">
-                    {client.username}
-                  </td>
+
                   <td className="px-4 py-4">{client.sessions}</td>
-                  <td className="px-4 py-4 hidden lg:table-cell">
-                    {client.status}
+                  <td className="px-4 py-4">
+                    <span
+                      className={`px-3 py-1 text-sm font-medium rounded-full ${
+                        client.status
+                          ? "text-green-600 bg-green-100"
+                          : "text-red-600 bg-red-100"
+                      }`}
+                    >
+                      {client.status ? "Active" : "Inactive"}
+                    </span>
                   </td>
+
                   <td className="px-4 py-4 flex space-x-3">
-                    <a href="#" className="text-blue-600 hover:underline">
-                      Activate
-                    </a>
-                    <a href="#" className="text-red-600 hover:underline">
-                      Deactivate
-                    </a>
+                    {client.status ? (
+                      <a
+                        className="text-red-600 hover:underline cursor-pointer "
+                        onClick={(e) => {
+                          deactivateClient(client.userId);
+                        }}
+                      >
+                        Deactivate
+                      </a>
+                    ) : (
+                      <a
+                        className="text-blue-600 hover:underline cursor-pointer"
+                        onClick={(e) => {
+                          reactivateClient(client.userId);
+                        }}
+                      >
+                        Activate
+                      </a>
+                    )}
                   </td>
                 </tr>
               ))
@@ -178,7 +220,11 @@ const Clients = () => {
         </button>
       </div>
 
-      <AddClientModal isOpen={isModalOpen} closeModal={closeModal} />
+      <AddClientModal
+        isOpen={isModalOpen}
+        closeModal={closeModal}
+        getClients={getClients}
+      />
     </div>
   );
 };

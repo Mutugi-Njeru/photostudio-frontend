@@ -1,9 +1,17 @@
 import { FiBell, FiUser, FiMenu } from "react-icons/fi";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import {
+  deactivateUser,
+  getStoredUserId,
+  logout,
+} from "../../service/apiService";
+import { useNavigate } from "react-router-dom";
 
 function Header({ onMenuClick }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const navigate = useNavigate();
+  const userId = getStoredUserId();
 
   // Function to toggle dropdown
   const handleDropdownToggle = () => {
@@ -24,14 +32,20 @@ function Header({ onMenuClick }) {
     };
   }, []);
 
-  // Placeholder functions for actions
   const handleLogout = () => {
-    alert("Logout functionality triggered");
+    logout();
+    navigate("/login");
   };
 
-  const handleDeactivate = () => {
-    alert("Deactivate functionality triggered");
-  };
+  const handleDeactivate = useCallback(async () => {
+    try {
+      await deactivateUser(userId);
+      logout();
+      navigate("/login");
+    } catch (error) {
+      console.error("Error deactivating account:", error);
+    }
+  }, [navigate, userId]);
 
   return (
     <header className="bg-white shadow-md p-4">

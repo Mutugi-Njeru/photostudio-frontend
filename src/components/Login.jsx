@@ -4,12 +4,14 @@ import {
   getCLientId,
   getClientName,
   getRole,
+  getUserId,
   loginUser,
   saveLoggedinUser,
   saveUserRole,
   storeClientId,
   storeClientName,
   storeToken,
+  storeUserId,
 } from "../service/apiService";
 
 const Login = () => {
@@ -55,6 +57,10 @@ const Login = () => {
         storeClientId(clientId);
         navigate("/client");
       } else if (userRole === "admin") {
+        const userIdResponse = await getUserId(username);
+        const userId = userIdResponse.data.message.userId;
+        console.log(userId);
+        storeUserId(userId);
         navigate("/admin");
       }
     } catch (error) {
@@ -139,6 +145,11 @@ const Login = () => {
           Forgot password?{" "}
           <a href="/password" className="text-blue-600 hover:underline">
             Click here
+          </a>
+        </div>
+        <div className="text-center text-sm text-gray-600">
+          <a href="/" className="text-blue-600 hover:underline">
+            Take me home
           </a>
         </div>
       </div>

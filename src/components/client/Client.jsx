@@ -126,8 +126,8 @@ function Client() {
 
         {/* Modal */}
         {isModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-            <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/50">
+            <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl max-h-[90vh] overflow-y-auto">
               <h2 className="text-xl font-bold mb-4">Book a New Session</h2>
               <form onSubmit={bookEvent} className="space-y-6">
                 <div>
@@ -187,7 +187,7 @@ function Client() {
                     required
                   />
                 </div>
-                <div className="flex justify-end gap-4">
+                <div className="flex flex-col sm:flex-row justify-end gap-4">
                   <button
                     type="button"
                     onClick={() => setIsModalOpen(false)}
@@ -198,7 +198,9 @@ function Client() {
                   <button
                     type="submit"
                     className={`px-5 py-3 rounded-lg ${
-                      isLoading ? "bg-gray-300" : "bg-black text-white"
+                      isLoading
+                        ? "bg-gray-300 cursor-not-allowed"
+                        : "bg-black text-white"
                     }`}
                     disabled={isLoading}
                   >
@@ -210,7 +212,7 @@ function Client() {
           </div>
         )}
 
-        <div className="grid gap-8 md:grid-cols-7">
+        <div className="grid gap-8 grid-cols-1 md:grid-cols-7">
           {/* Main Content */}
           <div className="md:col-span-5">
             <div className="p-6 bg-white rounded-lg shadow">
@@ -223,30 +225,27 @@ function Client() {
                 {paginatedEvents.map((event) => (
                   <div
                     key={event.eventId}
-                    className="flex items-center gap-4 rounded-lg border p-4"
+                    className="flex flex-col sm:flex-row items-center gap-4 rounded-lg border p-4"
                   >
                     <img
                       src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?q=80&w=200&h=200"
                       alt={event.eventType}
                       className="h-16 w-16 rounded-md object-cover"
                     />
-                    <div className="flex-1 space-y-1">
-                      <div className="flex items-center justify-between">
+                    <div className="flex-1 space-y-1 text-center sm:text-left">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                         <h3 className="font-medium">{event.eventType}</h3>
-                        <div className="flex-1 flex justify-center">
-                          <h3
-                            className={`font-medium ${
-                              event.status === "waiting approval"
-                                ? "text-yellow-600"
-                                : event.status === "approved"
-                                ? "text-green-600"
-                                : "text-gray-600"
-                            }`}
-                          >
-                            {event.status}
-                          </h3>
-                        </div>
-
+                        <h3
+                          className={`font-medium ${
+                            event.status === "waiting approval"
+                              ? "text-yellow-600"
+                              : event.status === "approved"
+                              ? "text-green-600"
+                              : "text-gray-600"
+                          }`}
+                        >
+                          {event.status}
+                        </h3>
                         <span
                           className={`px-2 py-1 text-sm rounded ${
                             event.isActive
@@ -266,14 +265,15 @@ function Client() {
                   </div>
                 ))}
               </div>
+
               {/* Pagination Controls */}
-              <div className="flex justify-center mt-6 space-x-2">
+              <div className="flex flex-col sm:flex-row justify-center mt-6 space-y-2 sm:space-y-0 sm:space-x-2">
                 <button
                   onClick={() =>
                     setCurrentPage((prev) => Math.max(prev - 1, 1))
                   }
                   disabled={currentPage === 1}
-                  className={`px-4 py-2 rounded ${
+                  className={`px-4 py-2 w-full sm:w-auto rounded ${
                     currentPage === 1
                       ? "bg-gray-300 cursor-not-allowed"
                       : "bg-black text-white"
@@ -282,7 +282,7 @@ function Client() {
                   Previous
                 </button>
 
-                <span className="px-4 py-2 border rounded">
+                <span className="px-4 py-2 border rounded text-center">
                   {currentPage} / {totalPages}
                 </span>
 
@@ -291,7 +291,7 @@ function Client() {
                     setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                   }
                   disabled={currentPage === totalPages}
-                  className={`px-4 py-2 rounded ${
+                  className={`px-4 py-2 w-full sm:w-auto rounded ${
                     currentPage === totalPages
                       ? "bg-gray-300 cursor-not-allowed"
                       : "bg-black text-white"
@@ -304,7 +304,7 @@ function Client() {
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-8 md:col-span-2">
+          <div className="space-y-8 md:col-span-2 order-last md:order-none">
             <div className="p-6 bg-white rounded-lg shadow">
               <div className="flex items-center gap-2 mb-4">
                 <FaUserCircle className="h-5 w-5" />
@@ -322,17 +322,17 @@ function Client() {
                 </div>
                 <div className="w-full space-y-2">
                   <button
-                    className="w-full px-4 py-2 text-left border rounded flex items-center gap-2"
+                    className="w-full px-4 py-2 border rounded flex items-center gap-2"
                     onClick={() => setIsAccountSettingsOpen(true)}
                   >
                     <FaCog /> Account Details
                   </button>
-                  <button className="w-full px-4 py-2 text-left border rounded flex items-center gap-2">
+                  <button className="w-full px-4 py-2 border rounded flex items-center gap-2">
                     <FaCreditCard /> Billing
                   </button>
                   <button
                     onClick={handleLogout}
-                    className="w-full px-4 py-2 text-left border rounded flex items-center gap-2 text-red-600 hover:bg-red-50"
+                    className="w-full px-4 py-2 border rounded flex items-center gap-2 text-red-600 hover:bg-red-50"
                   >
                     <FaSignOutAlt /> Logout
                   </button>

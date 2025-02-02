@@ -1,90 +1,177 @@
-// Modal.js
 import React, { useState } from "react";
+import { signUpClient } from "../../../service/apiService";
+import { toast } from "react-toastify";
 
-const AddClientModal = ({ isOpen, closeModal }) => {
-  if (!isOpen) return null; // If the modal is not open, return null
+const AddClientModal = ({ isOpen, closeModal, getCLients }) => {
+  if (!isOpen) return null;
+
+  const [clientDetails, setClientDetails] = useState({
+    firstname: "",
+    lastname: "",
+    phoneNumber: "",
+    email: "",
+    username: "",
+    password: "",
+  });
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState({});
+
+  const validate = () => {
+    const validationErrors = {};
+
+    if (!/^[a-zA-Z]{2,50}$/.test(clientDetails.firstname)) {
+      validationErrors.firstname =
+        "Firstname must be between 2 and 50 characters and contain only letters";
+    }
+
+    if (!/^[a-zA-Z]{2,50}$/.test(clientDetails.lastname)) {
+      validationErrors.lastname =
+        "Lastname must be between 2 and 50 characters and contain only letters";
+    }
+
+    if (!/^254\d{9}$/.test(clientDetails.phoneNumber)) {
+      validationErrors.phoneNumber =
+        "Phone number must be 12 characters, start with 254, and contain only digits";
+    }
+
+    if (
+      !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
+        clientDetails.email
+      )
+    ) {
+      validationErrors.email = "Please enter a valid email address";
+    }
+
+    if (!/^[a-zA-Z0-9]{2,50}$/.test(clientDetails.username)) {
+      validationErrors.username =
+        "Username must be between 2 and 50 characters and contain only letters and digits";
+    }
+
+    if (
+      !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/.test(
+        clientDetails.password
+      )
+    ) {
+      validationErrors.password =
+        "Password must be at least 8 characters, contain at least one uppercase letter, one lowercase letter, one digit, and one special character";
+    }
+
+    setErrors(validationErrors);
+    return Object.keys(validationErrors).length === 0;
+  };
+
+  const createClient = async (e) => {
+    e.preventDefault();
+    if (!validate()) {
+      toast.error("Please fix the highlighted errors before submitting.");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      await signUpClient(clientDetails);
+      toast.success("Client created successfully!");
+      closeModal();
+      getCLients();
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Error creating client.");
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+      <div className="bg-white p-6 rounded-lg shadow-lg w-96 max-h-[90vh] flex flex-col">
+        {/* Modal Header */}
         <h2 className="text-xl font-semibold mb-4">Add Client</h2>
-        <form>
-          <div className="mb-4">
-            <label className="before:content-['*'] before:ml-0.5 before:text-pink-500  block mb-2 text-sm font-medium text-gray-900">
-              Firstname
+
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto px-2">
+          {[
+            { label: "Firstname", name: "firstname" },
+            { label: "Lastname", name: "lastname" },
+            { label: "Phone Number", name: "phoneNumber" },
+            { label: "Email", name: "email", type: "email" },
+            { label: "Username", name: "username" },
+          ].map(({ label, name, type = "text" }) => (
+            <div key={name} className="mb-4">
+              <label className="block mb-2 text-sm font-medium text-gray-900">
+                {label} <span className="text-pink-500">*</span>
+              </label>
+              {errors[name] && (
+                <span className="text-sm text-red-600">{errors[name]}</span>
+              )}
+              <input
+                type={type}
+                className="w-full p-2 border rounded-lg"
+                placeholder={`Enter ${label.toLowerCase()}`}
+                value={clientDetails[name]}
+                onChange={(e) =>
+                  setClientDetails((prev) => ({
+                    ...prev,
+                    [name]: e.target.value,
+                  }))
+                }
+                required
+              />
+            </div>
+          ))}
+
+          {/* Password Input */}
+          <div className="mb-4 relative">
+            <label className="block mb-2 text-sm font-medium text-gray-900">
+              Password <span className="text-pink-500">*</span>
             </label>
-            <input
-              type="text"
-              className="w-full p-2 border rounded-lg"
-              placeholder="Enter full name"
-            />
+            {errors.password && (
+              <span className="text-sm text-red-600">{errors.password}</span>
+            )}
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                className="w-full p-2 border rounded-lg pr-10"
+                placeholder="Enter password"
+                value={clientDetails.password}
+                onChange={(e) =>
+                  setClientDetails((prev) => ({
+                    ...prev,
+                    password: e.target.value,
+                  }))
+                }
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-3 text-sm text-gray-500"
+              >
+                {showPassword ? "Hide" : "Show"}
+              </button>
+            </div>
           </div>
-          <div className="mb-4">
-            <label className="before:content-['*'] before:ml-0.5 before:text-pink-500  block mb-2 text-sm font-medium text-gray-900">
-              Lastname
-            </label>
-            <input
-              type="text"
-              className="w-full p-2 border rounded-lg"
-              placeholder="Enter full name"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="before:content-['*'] before:ml-0.5 before:text-pink-500  block mb-2 text-sm font-medium text-gray-900">
-              Phone Number
-            </label>
-            <input
-              type="text"
-              className="w-full p-2 border rounded-lg"
-              placeholder="Enter full name"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="before:content-['*'] before:ml-0.5 before:text-pink-500  block mb-2 text-sm font-medium text-gray-900">
-              Email
-            </label>
-            <input
-              type="text"
-              className="w-full p-2 border rounded-lg"
-              placeholder="Enter full name"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="before:content-['*'] before:ml-0.5 before:text-pink-500  block mb-2 text-sm font-medium text-gray-900">
-              Username
-            </label>
-            <input
-              type="text"
-              className="w-full p-2 border rounded-lg"
-              placeholder="Enter phone number"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="before:content-['*'] before:ml-0.5 before:text-pink-500  block mb-2 text-sm font-medium text-gray-900">
-              Password
-            </label>
-            <input
-              type="email"
-              className="w-full p-2 border rounded-lg"
-              placeholder="Enter email"
-            />
-          </div>
-          <div className="flex justify-end">
-            <button
-              type="button"
-              className="bg-gray-500 text-white px-4 py-2 rounded-md mr-2"
-              onClick={closeModal}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="bg-blue-500 text-white px-4 py-2 rounded-md"
-            >
-              Save Client
-            </button>
-          </div>
-        </form>
+        </div>
+
+        {/* Action Buttons (Fixed at Bottom) */}
+        <div className="flex justify-end border-t pt-4 mt-4">
+          <button
+            type="button"
+            className="bg-gray-500 text-white px-4 py-2 rounded-md mr-2"
+            onClick={closeModal}
+            disabled={isLoading}
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="bg-blue-500 text-white px-4 py-2 rounded-md"
+            onClick={createClient}
+            disabled={isLoading}
+          >
+            {isLoading ? "Saving..." : "Save Client"}
+          </button>
+        </div>
       </div>
     </div>
   );

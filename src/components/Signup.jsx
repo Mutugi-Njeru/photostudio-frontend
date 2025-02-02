@@ -277,6 +277,11 @@ const Signup = () => {
               Log in here
             </Link>
           </div>
+          <div className="text-center text-sm text-gray-600">
+            <a href="/" className="text-blue-600 hover:underline">
+              Take me home
+            </a>
+          </div>
         </div>
       </div>
     </div>
