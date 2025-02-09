@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import ClientCards from "./ClientCards";
+import DashboardStats from "../../dashboard/DashboardStats";
 import AddClientModal from "./AddClientModal";
 import {
   deactivateUser,
   getAllClients,
   reactivateUser,
 } from "../../../service/apiService";
-import { useNavigate } from "react-router-dom";
 
 const Clients = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -76,7 +76,7 @@ const Clients = () => {
 
   return (
     <div className="p-4">
-      <ClientCards />
+      <ClientCards totalClients={clients.length} />
       <h1 className="text-2xl font-semibold">Clients</h1>
 
       {/* Search and Add Client Section */}
@@ -116,9 +116,9 @@ const Clients = () => {
               </th>
               <th className="px-4 py-3">Fullname</th>
               <th className="px-4 py-3 hidden lg:table-cell">Joined</th>
-              <th className="px-4 py-3 hidden sm:table-cell">Phone</th>
+              <th className="px-4 py-3 ">Phone</th>
               <th className="px-4 py-3 hidden sm:table-cell">Email</th>
-              <th className="px-4 py-3 hidden md:table-cell">Sessions</th>
+              <th className="px-4 py-3 hidden sm:table-cell">Sessions</th>
               <th className="px-4 py-3">Status</th>
               <th className="px-4 py-3">Action</th>
             </tr>
@@ -136,14 +136,14 @@ const Clients = () => {
                   <td className="px-4 py-4 hidden sm:table-cell text-blue-600">
                     {client.dateOfJoin}
                   </td>
-                  <td className="px-4 py-4 hidden sm:table-cell">
-                    {client.phone}
-                  </td>
+                  <td className="px-4 py-4">{client.phone}</td>
                   <td className="px-4 py-4 hidden md:table-cell">
                     {client.email}
                   </td>
 
-                  <td className="px-4 py-4">{client.sessions}</td>
+                  <td className="px-4 py-4 hidden sm:table-cell">
+                    {client.sessions}
+                  </td>
                   <td className="px-4 py-4">
                     <span
                       className={`px-3 py-1 text-sm font-medium rounded-full ${

@@ -59,7 +59,7 @@ function App() {
     if (isAuth && userRole === role) {
       return children;
     }
-    return <Navigate to="/login" />;
+    return <Navigate to="/" />;
   }
 
   return (

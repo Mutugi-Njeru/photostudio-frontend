@@ -1,6 +1,12 @@
+import { useState } from "react";
+import NewUser from "./components/NewUser";
 import DashboardStats from "./DashboardStats";
 
 function Dashboard() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
   return (
     <div className="p-4 sm:p-6">
       <h2 className="text-xl sm:text-2xl font-semibold mb-6">
@@ -28,7 +34,10 @@ function Dashboard() {
         <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md">
           <h3 className="text-lg font-semibold mb-4">Quick Actions</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-            <button className="p-3 sm:p-4 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 text-sm sm:text-base">
+            <button
+              onClick={openModal}
+              className="p-3 sm:p-4 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 text-sm sm:text-base"
+            >
               Add New User
             </button>
             <button className="p-3 sm:p-4 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 text-sm sm:text-base">
@@ -43,6 +52,7 @@ function Dashboard() {
           </div>
         </div>
       </div>
+      <NewUser isOpen={isModalOpen} closeModal={closeModal} />
     </div>
   );
 }

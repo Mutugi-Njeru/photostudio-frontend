@@ -36,6 +36,15 @@ export const deactivateUser=(userId)=> axios.put(BASE_REST_API_URL+ 'user/deacti
 export const reactivateUser=(userId)=> axios.put(BASE_REST_API_URL+ 'user/reactivate/'+ userId)
 export const getUserId=(username)=> axios.get(BASE_REST_API_URL+ 'user/get/id/' +username)
 export const getAllEvents=()=> axios.get(BASE_REST_API_URL+ 'event/all')
+export const approveEvent=(eventId)=> axios.put(BASE_REST_API_URL+ 'event/approve/'+ eventId)
+export const rejectEvent=(eventId)=> axios.put(BASE_REST_API_URL+ 'event/reject/'+ eventId)
+export const completeEvent=(eventId)=> axios.put(BASE_REST_API_URL+ 'event/complete/'+ eventId)
+export const getAllUsers =()=>axios.get(BASE_REST_API_URL+ 'user/get-all')
+export const getUser=(userId)=>axios.get(BASE_REST_API_URL+ 'user/get-user/' +userId)
+export const updateUser=(userId, user)=>axios.put(BASE_REST_API_URL+ 'user/update/'+ userId, user)
+export const updateUserPassword=(userId, password)=> axios.put(BASE_REST_API_URL+ 'user/update/password/' +userId, password)
+export const createUser=(user)=>axios.post(BASE_REST_API_URL+ 'user/create', user)
+
 
 export const logout=()=>{
     localStorage.clear();

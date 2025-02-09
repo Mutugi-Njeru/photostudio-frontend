@@ -253,7 +253,9 @@ function Client() {
                               : "bg-yellow-100 text-yellow-800"
                           }`}
                         >
-                          {event.isActive ? "Completed" : "Pending"}
+                          {!event.isActive && event.status === "approved"
+                            ? "Completed"
+                            : "Pending"}
                         </span>
                       </div>
                       <p className="text-sm text-gray-500">{event.location}</p>

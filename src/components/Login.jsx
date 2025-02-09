@@ -59,7 +59,6 @@ const Login = () => {
       } else if (userRole === "admin") {
         const userIdResponse = await getUserId(username);
         const userId = userIdResponse.data.message.userId;
-        console.log(userId);
         storeUserId(userId);
         navigate("/admin");
       }

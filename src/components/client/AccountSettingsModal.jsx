@@ -96,6 +96,7 @@ function AccountSettingsModal({ isOpen, onClose }) {
     try {
       await updateClientDetails(clientId, client);
       toast.success("Details updated successfully!");
+      setOriginalClient(client);
     } catch (error) {
       toast.error("Error updating client. Please try again.");
       console.error(error);

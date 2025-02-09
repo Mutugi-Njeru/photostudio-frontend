@@ -5,7 +5,7 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 const SessionPieChart = ({ approvedCount, deniedCount, waitingCount }) => {
   const data = {
-    labels: ["Approved", "Denied", "Waiting"],
+    labels: ["Approved", "Rejected", "Waiting"],
     datasets: [
       {
         data: [approvedCount, deniedCount, waitingCount],
